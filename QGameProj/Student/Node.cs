@@ -5,6 +5,12 @@ namespace Student
 {
     public class Node
     {
+
+        public Node(int x, int y) 
+        {
+            position.X = x;
+            position.Y = y;
+        }
         Point position;
 
         public Point Position { get { return position; } }
