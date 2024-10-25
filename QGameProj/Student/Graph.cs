@@ -24,7 +24,7 @@ namespace Student
             {
                 for (int j = 0; j < size; j++)
                 {
-                    Node[i, j] = new Node(i, j);
+                    grid[i, j] = new Node(i, j);
                 }
             }
         }

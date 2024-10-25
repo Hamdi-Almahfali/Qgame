@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Student
 {
@@ -11,9 +12,11 @@ namespace Student
             position.X = x;
             position.Y = y;
         }
-        Point position;
-
         public Point Position { get { return position; } }
+
+
+        private Point position;
+        private List<bool> sides;
 
 
 
@@ -21,7 +24,10 @@ namespace Student
         {
             return $"({position.X}, {position.Y})";
         }
-
+        public List<bool> getSides()
+        {
+            return sides;
+        }
     }
 
 }
