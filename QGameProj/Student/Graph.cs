@@ -29,11 +29,10 @@ namespace Student
             }
         }
 
-        public void FindWalls(SpelBräde bräde)
+        public void FindRoute()
         {
+            //Insert bfs here.
 
         }
     }
-
-    
 }
