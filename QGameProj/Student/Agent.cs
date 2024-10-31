@@ -15,6 +15,7 @@ class Agent : BaseAgent
 
     public override Drag SökNästaDrag(SpelBräde bräde)
     {
+        Graph graph = new Graph();
         Spelare jag = bräde.spelare[0];
         Point start = jag.position;
         Point goal = new Point(start.X, 8);

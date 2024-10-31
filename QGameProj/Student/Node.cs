@@ -50,6 +50,8 @@ namespace Student
                     neighbors.Add(neighbor);
                 }
             }
+
+            //Temporary implementation to help with debugging at the moment. Will combine these together into one method later.
             CheckForWallAbove(sb);
             CheckForWallRight(sb);
             CheckForWallBelow(sb);

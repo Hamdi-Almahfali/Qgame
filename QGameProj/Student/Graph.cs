@@ -5,15 +5,16 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Student
 {
-    internal class Graph
+    public class Graph
     {
-        int size = 8; //Board is 9x9, but arrays start at 0.
+        int size = 9; //Board is 9x9
         public Node[,] grid;
 
-        Graph()
+        public Graph()
         {
             grid = new Node[size, size];
             Initialize();
@@ -25,6 +26,7 @@ namespace Student
                 for (int j = 0; j < size; j++)
                 {
                     grid[i, j] = new Node(i, j);
+                    //Temp again. Debugging purposes.
                 }
             }
         }
