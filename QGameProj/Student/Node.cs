@@ -41,9 +41,11 @@ namespace Student
             {
                 int xNeighbor = position.X + horizontalNeighbors[i];
                 int yNeighbor = position.Y + verticalNeighbors[i];
+                //Takes the values from the two arrays. Index 0 will always be the node above, 1 the node to the right, 2 the node below, and 3 the node to the left.
 
                 if (xNeighbor < 8 && xNeighbor > 0 && yNeighbor < 8 && yNeighbor > 0)
                 {
+                    //Check if neighbors exist on gameboard. If they do, add them to a neighbor list.
                     Node neighbor = new Node(xNeighbor, yNeighbor);
                     neighbors.Add(neighbor);
                 }
@@ -56,12 +58,12 @@ namespace Student
 
         public void CheckForWallAbove(SpelBräde sb)
         {
-            //Checks if the bool at the position of the node is true. If it is true, a wall is there, and we remove the neighbor from the list.
+            //Checks if the bool at the position of the node is true. 
             if (sb.horisontellaVäggar[neighbors[0].Position.X, neighbors[0].Position.X])
             {
+                //If it is true, a wall is there, and we remove the neighbor from the list.
                 neighbors.Remove(neighbors[0]);
             }
-            //Check for wall at nieghbors[0]
         }
         
         public void CheckForWallRight(SpelBräde sb)
@@ -70,7 +72,6 @@ namespace Student
             {
                 neighbors.Remove(neighbors[1]);
             }
-            //Check for wall at nieghbors[1]
         }
         
         public void CheckForWallBelow(SpelBräde sb)
@@ -79,7 +80,6 @@ namespace Student
             {
                 neighbors.Remove(neighbors[2]);
             }
-            //Check for wall at nieghbors[2]
         }
         public void CheckForWallLeft(SpelBräde sb)
         {
@@ -87,7 +87,6 @@ namespace Student
             {
                 neighbors.Remove(neighbors[3]);
             }
-            //Check for wall at nieghbors[3]. Reference the walls list in graph
         }
     }
 

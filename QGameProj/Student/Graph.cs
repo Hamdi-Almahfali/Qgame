@@ -31,8 +31,7 @@ namespace Student
 
         public void FindRoute()
         {
-            //Insert bfs here.
-
+            //Insert bfs here. This will find our route from position to the other end of the board.
         }
     }
 }
