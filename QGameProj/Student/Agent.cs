@@ -27,7 +27,13 @@ class Agent : BaseAgent
 
         Spelare jag = bräde.spelare[0];
         Point start = jag.position;
-        Point goal = new Point(start.X, 8);
+
+        List<Node> goals = new List<Node>();
+        for (int i = 0; i < 9; i++)
+        {
+            Node goal = new Node(i, 8);
+            goals.Insert(i,goal);
+        }
 
         Queue<Node> queue = new Queue<Node>();
         HashSet<Point> visited = new HashSet<Point>();
@@ -40,7 +46,7 @@ class Agent : BaseAgent
             Node current = queue.Dequeue();
 
             // Check if the goal is reached
-            if (current.Position.Y == goal.Y)
+            if (goals.Contains(current))
             {
                 Drag drag = new Drag
                 {
@@ -90,7 +96,7 @@ class Agent : BaseAgent
         Point[] directions = {
             new Point(-1, 0), // Left
             new Point(0, -1), // Up
-            new Point(1, 0),   // Right
+            new Point(1, 0),  // Right
             new Point(0, 1)  // Down
         };
 
