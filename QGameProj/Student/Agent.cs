@@ -2,6 +2,7 @@
 using Student;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 class Agent : BaseAgent
 {
@@ -15,7 +16,15 @@ class Agent : BaseAgent
 
     public override Drag SökNästaDrag(SpelBräde bräde)
     {
+        Debug.WriteLine("----------------------------------------------------");
+        Debug.WriteLine("----------------------------------------------------");
+        Debug.WriteLine("----------------------------------------------------");
+        Debug.WriteLine("----------------------------------------------------");
         Graph graph = new Graph();
+        graph.Initialize();
+        graph.FindRoute(bräde);
+
+
         Spelare jag = bräde.spelare[0];
         Point start = jag.position;
         Point goal = new Point(start.X, 8);

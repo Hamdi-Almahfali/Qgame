@@ -31,8 +31,20 @@ namespace Student
             }
         }
 
-        public void FindRoute()
+        public void FindRoute(SpelBräde sb)
         {
+            foreach (Node node in grid)
+            {
+                node.FindNeighbors(sb);
+                Debug.WriteLine("Node " + node.ToString() +"'s neighbors:");
+                foreach (Node neighbor in node.Neighbors)
+                {
+                    if(neighbor != null)
+                        Debug.WriteLine(neighbor.ToString());
+                }
+            }
+
+                    
             //Insert bfs here. This will find our route from position to the other end of the board.
         }
     }
