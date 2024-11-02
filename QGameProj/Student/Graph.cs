@@ -78,7 +78,7 @@ namespace Student
                     }
 
                     // We return the move as the next step towards the goal
-                    Debug.Print($"BFS Move {jag.position.ToString()} {step.ToString()}");
+                    Debug.Print($"BFS Move! Pos: {jag.position.ToString()}, Goal: {step.ToString()}");
                     return new Drag
                     {
                         typ = Typ.Flytta,
@@ -106,7 +106,7 @@ namespace Student
                 point = start.Position
             };
             fallbackDrag.point.Y++;
-            Debug.Print("Fallback Move");
+            Debug.Print("Fallback Move!");
             return fallbackDrag;
         }
     }
