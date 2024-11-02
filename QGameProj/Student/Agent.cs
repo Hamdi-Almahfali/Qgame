@@ -26,7 +26,7 @@ class Agent : BaseAgent
 
 
         Spelare jag = bräde.spelare[0];
-        Point start = jag.position;
+        Node start = new Node(jag.position.X,jag.position.Y);
 
         List<Node> goals = new List<Node>();
         for (int i = 0; i < 9; i++)
@@ -36,9 +36,9 @@ class Agent : BaseAgent
         }
 
         Queue<Node> queue = new Queue<Node>();
-        HashSet<Point> visited = new HashSet<Point>();
+        HashSet<Node> visited = new HashSet<Node>();
 
-        queue.Enqueue(new Node(start.X, start.Y));
+        queue.Enqueue(new Node(start.Position.X, start.Position.Y));
         visited.Add(start);
 
         while (queue.Count > 0)
@@ -56,11 +56,13 @@ class Agent : BaseAgent
                 return drag;
             }
 
-            foreach (Point neighbor in GetValidNeighbors(current.Position, bräde))
+            foreach (Node neighbor in current.Neighbors)
             {
+                if (neighbor == null) continue;
+
                 if (!visited.Contains(neighbor))
                 {
-                    queue.Enqueue(new Node(neighbor.X, neighbor.Y));
+                    queue.Enqueue(new Node(neighbor.Position.X, neighbor.Position.Y));
                     visited.Add(neighbor);
                 }
             }
@@ -69,16 +71,16 @@ class Agent : BaseAgent
         Drag fallbackDrag = new Drag
         {
             typ = Typ.Flytta,
-            point = start
+            point = start.Position
         };
         fallbackDrag.point.Y++;
         return fallbackDrag;
     }
 
 
-    private bool IsValidMove(Point current, Point next, SpelBräde bräde)
+    private bool IsValidMove(Node current, Node next, SpelBräde bräde)
     {
-        if (next.X < 0 || next.X >= 8 || next.Y < 0 || next.Y >= 8)
+        if (next.Position.X < 0 || next.Position.X >= 8 || next.Position.Y < 0 || next.Position.Y >= 8)
         {
             return false;
         }
@@ -88,29 +90,6 @@ class Agent : BaseAgent
         //    return false;
         //}
         return true;
-    }
-    private List<Point> GetValidNeighbors(Point current, SpelBräde bräde)
-    {
-        List<Point> neighbors = new List<Point>();
-
-        Point[] directions = {
-            new Point(-1, 0), // Left
-            new Point(0, -1), // Up
-            new Point(1, 0),  // Right
-            new Point(0, 1)  // Down
-        };
-
-        foreach (Point direction in directions)
-        {
-            Point neighbor = new Point(current.X + direction.X, current.Y + direction.Y);
-
-            if (IsValidMove(current, neighbor, bräde))
-            {
-                neighbors.Add(neighbor);
-            }
-        }
-
-        return neighbors;
     }
 
     public override Drag GörOmDrag(SpelBräde bräde, Drag drag)
