@@ -38,7 +38,7 @@ namespace Student
             return $"({position.X}, {position.Y})";
         }
 
-        public void FindNeighbors(SpelBräde sb)
+        public void FindNeighbors(SpelBräde sb, Node[,] grid)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -49,8 +49,7 @@ namespace Student
                 if (xNeighbor <= 8 && xNeighbor >= 0 && yNeighbor <= 8 && yNeighbor >= 0)
                 { 
                     //Check if neighbors exist on gameboard. If they do, add them to a neighbor list.
-                    Node neighbor = new Node(xNeighbor, yNeighbor);
-                    neighbors[i] = neighbor;
+                    neighbors[i] = grid[xNeighbor, yNeighbor];
                 }
             }
 

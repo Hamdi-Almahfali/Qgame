@@ -31,11 +31,11 @@ namespace Student
             }
         }
 
-        public void FindRoute(SpelBräde sb)
+        public Drag FindRoute(SpelBräde sb)
         {
             foreach (Node node in grid)
             {
-                node.FindNeighbors(sb);
+                node.FindNeighbors(sb, grid);
                 Debug.WriteLine("Node " + node.ToString() +"'s neighbors:");
                 foreach (Node neighbor in node.Neighbors)
                 {
@@ -44,8 +44,68 @@ namespace Student
                 }
             }
 
-                    
-            //Insert bfs here. This will find our route from position to the other end of the board.
+
+            //Insert bfs here. This will find our route from position to the other end of the board./
+            Spelare jag = sb.spelare[0];
+            Node start = grid[jag.position.X, jag.position.Y];
+
+            List<Node> goals = new List<Node>();
+            for (int i = 0; i < 9; i++)
+            {
+                goals.Add(grid[i, 8]);
+            }
+
+            Queue<Node> queue = new Queue<Node>();
+            HashSet<Node> visited = new HashSet<Node>();
+            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>(); // Dictionary for storing node origin
+
+            queue.Enqueue(start);
+            visited.Add(start);
+            cameFrom[start] = null;
+
+            while (queue.Count > 0)
+            {
+                Node current = queue.Dequeue();
+
+                // Check if the goal is reached
+                if (goals.Contains(current))
+                {
+                    // Here we use the dictionary to trace back the node at the start
+                    Node step = current;
+                    while (cameFrom[step] != start)
+                    {
+                        step = cameFrom[step];
+                    }
+
+                    // We return the move as the next step towards the goal
+                    return new Drag
+                    {
+                        typ = Typ.Flytta,
+                        point = step.Position
+                    };
+                }
+
+                foreach (Node neighbor in current.Neighbors)
+                {
+                    if (neighbor == null) continue;
+
+                    if (!visited.Contains(neighbor))
+                    {
+                        queue.Enqueue(neighbor);
+                        visited.Add(neighbor);
+                        cameFrom[neighbor] = current;
+                    }
+                }
+            }
+
+
+            Drag fallbackDrag = new Drag
+            {
+                typ = Typ.Flytta,
+                point = start.Position
+            };
+            fallbackDrag.point.Y++;
+            return fallbackDrag;
         }
     }
 }
