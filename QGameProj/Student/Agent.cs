@@ -11,6 +11,7 @@ class Agent : BaseAgent
     static void Main()
     {
         Program.Start(new Agent());
+        
     }
 
     public Agent() { }

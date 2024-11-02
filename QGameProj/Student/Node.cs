@@ -22,16 +22,12 @@ namespace Student
         {
             position.X = x;
             position.Y = y;
-        }
-
-        
+        }    
 
         public List<bool> getSides()
         {
             return sides;
         }
-
-        
 
         public override string ToString()
         {
@@ -58,8 +54,7 @@ namespace Student
             CheckForWallRight(sb);
             CheckForWallBelow(sb);
             CheckForWallLeft(sb);
-            //Some curious things with this. A wall is placed on 3,3 and 4,3 but is noticed only by 3,2 3,4 4,2 and 4,4
-            //buggy ig but we ball
+            //we balled. no longer buggy
         }
 
         public void CheckForWallAbove(SpelBräde sb)
@@ -69,7 +64,7 @@ namespace Student
             if (neighbors[0].Position.Y == 8)
                 return;
             //Checks if the bool at the position of the node is true. 
-            if (sb.horisontellaVäggar[neighbors[0].Position.X, neighbors[0].Position.Y]) //Out of index error when neighbor position at 8 because wall only goes up to 7. Fix this by making if statement to check if Y index is larger than 7?
+            if (sb.horisontellaVäggar[position.X, position.Y])
             {
                 //If it is true, a wall is there, and we remove the neighbor from the list.
                 neighbors[0] = null;
@@ -83,7 +78,7 @@ namespace Student
             if (neighbors[1].Position.X == 8)
                 return;
 
-            if (sb.vertikalaVäggar[neighbors[1].Position.X, neighbors[1].Position.Y])
+            if (sb.vertikalaVäggar[position.X, position.Y])
             {
                 neighbors[1] = null;
             }
@@ -101,6 +96,7 @@ namespace Student
                 neighbors[2] = null;
             }
         }
+
         public void CheckForWallLeft(SpelBräde sb)
         {
             if (neighbors[3] == null)

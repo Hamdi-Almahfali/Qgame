@@ -13,6 +13,9 @@ namespace Student
     {
         int size = 9; //Board is 9x9
         public Node[,] grid;
+        List<Node> myGoals = new List<Node>();
+        List<Node> opponentGoals = new List<Node>();
+        int pathLength;
 
         public Graph()
         {
@@ -26,8 +29,14 @@ namespace Student
                 for (int j = 0; j < size; j++)
                 {
                     grid[i, j] = new Node(i, j);
-                    //Temp again. Debugging purposes.
                 }
+            }
+
+            for (int i = 0; i < 9; i++)
+            {
+                myGoals.Add(grid[i, 8]);
+                opponentGoals.Add(grid[i, 0]);
+                //Could just initialize the lists with these values but I have no clue how lol
             }
         }
 
@@ -36,6 +45,7 @@ namespace Student
             foreach (Node node in grid)
             {
                 node.FindNeighbors(sb, grid);
+                //Only keep the FindNeighbors call above this line. Everything else is for debugging purposes and adds extra time complexity for no reason.
                 Debug.WriteLine("Node " + node.ToString() +"'s neighbors:");
                 foreach (Node neighbor in node.Neighbors)
                 {
@@ -44,16 +54,9 @@ namespace Student
                 }
             }
 
-
             //Insert bfs here. This will find our route from position to the other end of the board./
             Spelare jag = sb.spelare[0];
             Node start = grid[jag.position.X, jag.position.Y];
-
-            List<Node> goals = new List<Node>();
-            for (int i = 0; i < 9; i++)
-            {
-                goals.Add(grid[i, 8]);
-            }
 
             Queue<Node> queue = new Queue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
@@ -68,7 +71,7 @@ namespace Student
                 Node current = queue.Dequeue();
 
                 // Check if the goal is reached
-                if (goals.Contains(current))
+                if (myGoals.Contains(current))
                 {
                     // Here we use the dictionary to trace back the node at the start
                     Node step = current;
@@ -105,6 +108,7 @@ namespace Student
                 typ = Typ.Flytta,
                 point = start.Position
             };
+
             fallbackDrag.point.Y++;
             Debug.Print("Fallback Move!");
             return fallbackDrag;
