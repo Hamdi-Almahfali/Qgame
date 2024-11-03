@@ -18,11 +18,13 @@ namespace Student
         public Node[,] grid;
         List<Node> myGoals = new List<Node>();
         List<Node> opponentGoals = new List<Node>();
+        SpelBräde spelBräde;
 
-        public Graph()
+        public Graph(SpelBräde spelBräde)
         {
             grid = new Node[size, size];
             Initialize();
+            this.spelBräde = spelBräde;
         }
         public void Initialize()
         {
@@ -42,23 +44,23 @@ namespace Student
             }
         }
 
-        public Drag MakeMove(SpelBräde sb)
+        public Drag MakeMove()
         {
             foreach (Node node in grid)
             {
-                node.FindNeighbors(sb, grid);
+                node.FindNeighbors(spelBräde, grid);
             }
 
-            Spelare jag = sb.spelare[0];
+            Spelare jag = spelBräde.spelare[0];
             Node myStart = grid[jag.position.X, jag.position.Y];
 
-            Spelare fiende = sb.spelare[1];
+            Spelare fiende = spelBräde.spelare[1];
             Node enemyStart = grid[fiende.position.X, fiende.position.Y];
 
-            var myResult = FindRoute(sb, myStart, jag, myGoals);
-            var enemyResult = FindRoute(sb, enemyStart, fiende, opponentGoals);
+            var myResult = FindRoute(myStart, jag, myGoals);
+            var enemyResult = FindRoute(enemyStart, fiende, opponentGoals);
 
-            if(myResult.pathLength < enemyResult.pathLength)
+            if(myResult.pathLength < enemyResult.pathLength || jag.antalVäggar == 0)
             {
                 Debug.Print("Our path is shorter");
                 Debug.Print($"BFS Move! Pos: {jag.position.ToString()}, Goal: {myResult.nextStep.ToString()}");
@@ -67,47 +69,23 @@ namespace Student
 
             if (enemyResult.nextStep.Position.X > enemyStart.Position.X)
             {
-                if (sb.vertikalaVäggar[enemyStart.Position.X, enemyStart.Position.Y])
-                {
-                    return MoveDrag(myResult.nextStep.Position);
-                }
-                return PlaceVerticalWall(enemyStart.Position);
+                return PlaceVerticalWall(enemyStart.Position, myResult.nextStep.Position);
             }
             else if (enemyResult.nextStep.Position.X < enemyStart.Position.X)
             {
-                if (sb.vertikalaVäggar[enemyStart.Position.X, enemyStart.Position.Y])
-                {
-                    return MoveDrag(myResult.nextStep.Position);
-                }
-                return PlaceVerticalWall(enemyResult.nextStep.Position);
+                return PlaceVerticalWall(enemyResult.nextStep.Position, myResult.nextStep.Position);
             }
             else if (enemyResult.nextStep.Position.Y < enemyStart.Position.Y)
             {
-                if ((!sb.horisontellaVäggar[enemyResult.nextStep.Position.X + 1, enemyResult.nextStep.Position.Y]) && enemyStart.Position.X != 8)
-                {
-                    return PlaceHorisontalWall(enemyResult.nextStep.Position);
-                }
-                else if (!sb.horisontellaVäggar[enemyResult.nextStep.Position.X - 1, enemyResult.nextStep.Position.Y])
-                {
-                    return PlaceHorisontalWall(new Point(enemyStart.Position.X - 1, enemyResult.nextStep.Position.Y));
-                }
-                return MoveDrag(myResult.nextStep.Position);
+                return PlaceHorisontalWall(enemyResult.nextStep.Position, myResult.nextStep.Position);
             }
             else
             {
-                if ((!sb.horisontellaVäggar[enemyResult.nextStep.Position.X + 1, enemyStart.Position.Y]) && enemyStart.Position.X != 8)
-                {
-                    return PlaceHorisontalWall(enemyStart.Position);
-                }
-                else if (!sb.horisontellaVäggar[enemyResult.nextStep.Position.X - 1, enemyStart.Position.Y])
-                {
-                    return PlaceHorisontalWall(new Point(enemyStart.Position.X - 1, enemyStart.Position.Y));
-                }
-                return MoveDrag(myResult.nextStep.Position);
+                return PlaceHorisontalWall(enemyStart.Position, myResult.nextStep.Position);
             }
         }
 
-        public (int pathLength, Node nextStep) FindRoute(SpelBräde sb, Node start, Spelare spelare, List<Node> goals)
+        public (int pathLength, Node nextStep) FindRoute(Node start, Spelare spelare, List<Node> goals)
         {
             Queue<Node> queue = new Queue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
@@ -167,22 +145,52 @@ namespace Student
             };
         }
 
-        public Drag PlaceVerticalWall(Point position)
+        public Drag PlaceVerticalWall(Point position, Point nextStep)
         {
-            return new Drag
+            if (position.Y != 8 && !spelBräde.vertikalaVäggar[position.X, position.Y])
             {
-                typ = Typ.Vertikal,
-                point = position
-            };
+                return new Drag
+                {
+                    typ = Typ.Vertikal,
+                    point = position
+                };
+            }
+            else if (!spelBräde.vertikalaVäggar[position.X, position.Y - 1])
+            {
+                return new Drag
+                {
+                    typ = Typ.Vertikal,
+                    point = new Point(position.X, position.Y - 1)
+                };
+            }
+            else
+            {
+                return MoveDrag(nextStep);
+            }
         }
 
-        public Drag PlaceHorisontalWall(Point position)
+        public Drag PlaceHorisontalWall(Point position, Point nextStep)
         {
-            return new Drag
+            if (position.X != 8 && !spelBräde.horisontellaVäggar[position.X + 1, position.Y])
             {
-                typ = Typ.Horisontell,
-                point = position
-            };
+                return new Drag
+                {
+                    typ = Typ.Horisontell,
+                    point = position
+                };
+            }
+            else if (!spelBräde.horisontellaVäggar[position.X - 1, position.Y])
+            {
+                return new Drag
+                {
+                    typ = Typ.Horisontell,
+                    point = new Point(position.X - 1, position.Y)
+                };
+            }
+            else
+            {
+                return MoveDrag(nextStep);
+            }
         }
     }
 }

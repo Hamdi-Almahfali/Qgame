@@ -16,8 +16,8 @@ class Agent : BaseAgent
 
     public override Drag SökNästaDrag(SpelBräde bräde)
     {
-        Graph graph = new Graph();
-        return graph.MakeMove(bräde);
+        Graph graph = new Graph(bräde);
+        return graph.MakeMove();
     }
 
     public override Drag GörOmDrag(SpelBräde bräde, Drag drag)
