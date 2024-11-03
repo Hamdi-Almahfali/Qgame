@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections;
+using System.ComponentModel;
 
 namespace Student
 {
@@ -15,7 +17,6 @@ namespace Student
         public Node[,] grid;
         List<Node> myGoals = new List<Node>();
         List<Node> opponentGoals = new List<Node>();
-        int pathLength;
 
         public Graph()
         {
@@ -40,53 +41,77 @@ namespace Student
             }
         }
 
-        public Drag FindRoute(SpelBräde sb)
+        public Drag MakeMove(SpelBräde sb)
         {
             foreach (Node node in grid)
             {
                 node.FindNeighbors(sb, grid);
-                //Only keep the FindNeighbors call above this line. Everything else is for debugging purposes and adds extra time complexity for no reason.
-                Debug.WriteLine("Node " + node.ToString() +"'s neighbors:");
-                foreach (Node neighbor in node.Neighbors)
-                {
-                    if(neighbor != null)
-                        Debug.WriteLine(neighbor.ToString());
-                }
             }
 
             //Insert bfs here. This will find our route from position to the other end of the board./
             Spelare jag = sb.spelare[0];
-            Node start = grid[jag.position.X, jag.position.Y];
+            Node myStart = grid[jag.position.X, jag.position.Y];
 
+            Spelare fiende = sb.spelare[1];
+            Node enemyStart = grid[fiende.position.X, fiende.position.Y];
+
+             // Dictionary for storing node origin
+
+            var myResult = FindRoute(sb, myStart, jag, myGoals);
+            var enemyResult = FindRoute(sb, enemyStart, fiende, opponentGoals);
+
+            if(myResult.pathLength >= enemyResult.pathLength)
+            {
+                Debug.Print($"Enemy path is{enemyResult.pathLength}, our path is {myResult.pathLength}.");
+                return new Drag
+                {
+                    typ = Typ.Flytta,
+                    point = myResult.nextStep.Position,
+                };
+            }
+            else
+            {
+                Debug.Print("Our path is shorter");
+                return new Drag
+                {
+                    typ = Typ.Flytta,
+                    point = myResult.nextStep.Position,
+                };
+            }
+        }
+
+        public (int pathLength, Node nextStep) FindRoute(SpelBräde sb, Node start, Spelare spelare, List<Node> goals)
+        {
             Queue<Node> queue = new Queue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
-            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>(); // Dictionary for storing node origin
-
+            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
+            
+            int pathLength = 1;
             queue.Enqueue(start);
             visited.Add(start);
             cameFrom[start] = null;
+
+           
 
             while (queue.Count > 0)
             {
                 Node current = queue.Dequeue();
 
                 // Check if the goal is reached
-                if (myGoals.Contains(current))
+                if (goals.Contains(current))
                 {
                     // Here we use the dictionary to trace back the node at the start
                     Node step = current;
                     while (cameFrom[step] != start)
                     {
                         step = cameFrom[step];
+                        ++pathLength;
                     }
 
                     // We return the move as the next step towards the goal
-                    Debug.Print($"BFS Move! Pos: {jag.position.ToString()}, Goal: {step.ToString()}");
-                    return new Drag
-                    {
-                        typ = Typ.Flytta,
-                        point = step.Position
-                    };
+                    Debug.Print($"BFS Move! Pos: {spelare.position.ToString()}, Goal: {step.ToString()}");
+                    Debug.Print($"Path length: {pathLength}");
+                    return (pathLength, step);
                 }
 
                 foreach (Node neighbor in current.Neighbors)
@@ -102,16 +127,10 @@ namespace Student
                 }
             }
 
+            Node fallBackNode = new Node(start.Position.X, start.Position.Y + 1);
 
-            Drag fallbackDrag = new Drag
-            {
-                typ = Typ.Flytta,
-                point = start.Position
-            };
-
-            fallbackDrag.point.Y++;
             Debug.Print("Fallback Move!");
-            return fallbackDrag;
+            return (pathLength, fallBackNode);
         }
     }
 }

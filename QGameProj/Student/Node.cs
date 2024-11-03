@@ -61,7 +61,7 @@ namespace Student
         {
             if (neighbors[0] == null)
                 return;
-            if (neighbors[0].Position.Y == 8)
+            if (Position.Y == 8)
                 return;
             //Checks if the bool at the position of the node is true. 
             if (sb.horisontellaVäggar[position.X, position.Y])
@@ -75,7 +75,7 @@ namespace Student
         {
             if (neighbors[1] == null)
                 return;
-            if (neighbors[1].Position.X == 8)
+            if (Position.X == 8)
                 return;
 
             if (sb.vertikalaVäggar[position.X, position.Y])
@@ -88,7 +88,7 @@ namespace Student
         {
             if (neighbors[2] == null)
                 return;
-            if (neighbors[2].Position.Y == 0)
+            if (Position.Y == 0)
                 return;
 
             if (sb.horisontellaVäggar[neighbors[2].Position.X, neighbors[2].Position.Y])
@@ -101,7 +101,7 @@ namespace Student
         {
             if (neighbors[3] == null)
                 return;
-            if (neighbors[3].Position.X == 0)
+            if (Position.X == 0)
                 return;
 
             if (sb.vertikalaVäggar[neighbors[3].Position.X, neighbors[3].Position.Y])
