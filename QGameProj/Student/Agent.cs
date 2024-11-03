@@ -6,6 +6,9 @@ using System.Diagnostics;
 
 class Agent : BaseAgent
 {
+    Drag move;
+    List<Drag> illegalMoves = new List<Drag>();
+
     [STAThread]
     static void Main()
     {
@@ -17,12 +20,13 @@ class Agent : BaseAgent
     public override Drag SökNästaDrag(SpelBräde bräde)
     {
         Graph graph = new Graph(bräde);
-        return graph.MakeMove();
+        return move = graph.MakeMove(illegalMoves);
     }
 
     public override Drag GörOmDrag(SpelBräde bräde, Drag drag)
     {
-        System.Diagnostics.Debugger.Break();
+        //System.Diagnostics.Debugger.Break();
+        illegalMoves.Add(drag);
         return SökNästaDrag(bräde);
     }
 }

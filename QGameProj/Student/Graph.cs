@@ -14,12 +14,13 @@ namespace Student
 {
     public class Graph
     {
-        int size = 9; //Board is 9x9
         public Node[,] grid;
+        public List<Drag> illegalWalls;
+
+        int size = 9; //Board is 9x9
         List<Node> myGoals = new List<Node>();
         List<Node> opponentGoals = new List<Node>();
         SpelBräde spelBräde;
-
         public Graph(SpelBräde spelBräde)
         {
             grid = new Node[size, size];
@@ -44,7 +45,7 @@ namespace Student
             }
         }
 
-        public Drag MakeMove()
+        public Drag MakeMove(List<Drag> illegalMoves)
         {
             foreach (Node node in grid)
             {
@@ -67,22 +68,26 @@ namespace Student
                 return MoveDrag(myResult.nextStep.Position);
             }
 
+            Drag move;
             if (enemyResult.nextStep.Position.X > enemyStart.Position.X)
             {
-                return PlaceVerticalWall(enemyStart.Position, myResult.nextStep.Position);
+                move = PlaceVerticalWall(enemyStart.Position, myResult.nextStep.Position, illegalMoves);
             }
             else if (enemyResult.nextStep.Position.X < enemyStart.Position.X)
             {
-                return PlaceVerticalWall(enemyResult.nextStep.Position, myResult.nextStep.Position);
+                move = PlaceVerticalWall(enemyResult.nextStep.Position, myResult.nextStep.Position, illegalMoves);
             }
             else if (enemyResult.nextStep.Position.Y < enemyStart.Position.Y)
             {
-                return PlaceHorisontalWall(enemyResult.nextStep.Position, myResult.nextStep.Position);
+                move = PlaceHorisontalWall(enemyResult.nextStep.Position, myResult.nextStep.Position, illegalMoves);
             }
             else
             {
-                return PlaceHorisontalWall(enemyStart.Position, myResult.nextStep.Position);
+                move = PlaceHorisontalWall(enemyStart.Position, myResult.nextStep.Position, illegalMoves);
             }
+
+            // If chosen move is in the illegal moves list, fall back to a movement action
+            return illegalMoves.Contains(move) ? MoveDrag(myResult.nextStep.Position) : move;
         }
 
         public (int pathLength, Node nextStep) FindRoute(Node start, Spelare spelare, List<Node> goals)
@@ -145,7 +150,7 @@ namespace Student
             };
         }
 
-        public Drag PlaceVerticalWall(Point position, Point nextStep)
+        public Drag PlaceVerticalWall(Point position, Point nextStep, List<Drag> illegalMoves)
         {
             if (position.Y != 8 && !spelBräde.vertikalaVäggar[position.X, position.Y])
             {
@@ -169,7 +174,7 @@ namespace Student
             }
         }
 
-        public Drag PlaceHorisontalWall(Point position, Point nextStep)
+        public Drag PlaceHorisontalWall(Point position, Point nextStep, List<Drag> illegalMoves)
         {
             if (position.X != 8 && !spelBräde.horisontellaVäggar[position.X + 1, position.Y])
             {
