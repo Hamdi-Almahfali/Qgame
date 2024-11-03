@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Student
 {
@@ -48,35 +49,53 @@ namespace Student
                 node.FindNeighbors(sb, grid);
             }
 
-            //Insert bfs here. This will find our route from position to the other end of the board./
             Spelare jag = sb.spelare[0];
             Node myStart = grid[jag.position.X, jag.position.Y];
 
             Spelare fiende = sb.spelare[1];
             Node enemyStart = grid[fiende.position.X, fiende.position.Y];
 
-             // Dictionary for storing node origin
-
             var myResult = FindRoute(sb, myStart, jag, myGoals);
             var enemyResult = FindRoute(sb, enemyStart, fiende, opponentGoals);
 
-            if(myResult.pathLength >= enemyResult.pathLength)
+            if(myResult.pathLength < enemyResult.pathLength)
             {
-                Debug.Print($"Enemy path is{enemyResult.pathLength}, our path is {myResult.pathLength}.");
-                return new Drag
+                Debug.Print("Our path is shorter");
+                Debug.Print($"BFS Move! Pos: {jag.position.ToString()}, Goal: {myResult.nextStep.ToString()}");
+                return MoveDrag(myResult.nextStep.Position);
+            }
+
+            if (enemyResult.nextStep.Position.X > enemyStart.Position.X)
+            {
+                if (sb.vertikalaVäggar[enemyStart.Position.X, enemyStart.Position.Y])
                 {
-                    typ = Typ.Flytta,
-                    point = myResult.nextStep.Position,
-                };
+                    return MoveDrag(myResult.nextStep.Position);
+                }
+                return PlaceVerticalWall(enemyStart.Position);
+            }
+            else if (enemyResult.nextStep.Position.X < enemyStart.Position.X)
+            {
+                if (sb.vertikalaVäggar[enemyStart.Position.X, enemyStart.Position.Y])
+                {
+                    return MoveDrag(myResult.nextStep.Position);
+                }
+                return PlaceVerticalWall(enemyResult.nextStep.Position);
+            }
+            else if (enemyResult.nextStep.Position.Y > enemyStart.Position.Y)
+            {
+                if (sb.horisontellaVäggar[enemyResult.nextStep.Position.X, enemyResult.nextStep.Position.Y])
+                {
+                    return MoveDrag(myResult.nextStep.Position);
+                }
+                return PlaceHorisontalWall(enemyStart.Position);
             }
             else
             {
-                Debug.Print("Our path is shorter");
-                return new Drag
+                if (sb.horisontellaVäggar[enemyResult.nextStep.Position.X, enemyResult.nextStep.Position.Y])
                 {
-                    typ = Typ.Flytta,
-                    point = myResult.nextStep.Position,
-                };
+                    return MoveDrag(myResult.nextStep.Position);
+                }
+                return PlaceHorisontalWall(enemyResult.nextStep.Position);
             }
         }
 
@@ -109,8 +128,6 @@ namespace Student
                     }
 
                     // We return the move as the next step towards the goal
-                    Debug.Print($"BFS Move! Pos: {spelare.position.ToString()}, Goal: {step.ToString()}");
-                    Debug.Print($"Path length: {pathLength}");
                     return (pathLength, step);
                 }
 
@@ -131,6 +148,33 @@ namespace Student
 
             Debug.Print("Fallback Move!");
             return (pathLength, fallBackNode);
+        }
+
+        public Drag MoveDrag(Point position)
+        {
+            return new Drag
+            {
+                typ = Typ.Flytta,
+                point = position,
+            };
+        }
+
+        public Drag PlaceVerticalWall(Point position)
+        {
+            return new Drag
+            {
+                typ = Typ.Vertikal,
+                point = position
+            };
+        }
+
+        public Drag PlaceHorisontalWall(Point position)
+        {
+            return new Drag
+            {
+                typ = Typ.Horisontell,
+                point = position
+            };
         }
     }
 }
