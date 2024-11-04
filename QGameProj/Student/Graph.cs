@@ -69,6 +69,7 @@ namespace Student
             }
 
             Drag move;
+
             if (enemyResult.nextStep.Position.X > enemyStart.Position.X)
             {
                 move = PlaceVerticalWall(enemyStart.Position, myResult.nextStep.Position, illegalMoves);
@@ -152,7 +153,7 @@ namespace Student
 
         public Drag PlaceVerticalWall(Point position, Point nextStep, List<Drag> illegalMoves)
         {
-            if (position.Y != 8 && !spelBräde.vertikalaVäggar[position.X, position.Y])
+            if (position.Y != 8 && !spelBräde.vertikalaVäggar[position.X, position.Y +1])
             {
                 return new Drag
                 {
